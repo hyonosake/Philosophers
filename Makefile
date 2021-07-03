@@ -1,6 +1,7 @@
 NAME =		phil
-SRCS =		philo/atoi.c \
-			philo/main.c
+SRCS =		philo/philo_main/utils.c \
+			philo/philo_main/error.c \
+			philo/philo_main/main.c 
 
 OBJS =		${SRCS:.c=.o}
 DOBJS =		${SRCS:.c=.d}
@@ -26,8 +27,8 @@ re:			fclean all
 norm:		fclean
 			norminette phlo/*.c  
 run:		
-			make
-			./phil 1 2 3 4 5
+			make re
+			./phil 4 410 200 200
 bonus:		all
 
 .PHONY: all clean fclean re run bonus 
