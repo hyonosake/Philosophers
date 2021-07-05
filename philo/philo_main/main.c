@@ -1,17 +1,19 @@
 #include "philosophers.h"
 
+pthread_mutex_t	lock;
 
 //philosophers = threads
 //forks = shared data(+mutex)
 
 void	*routine(void *num)
 {
-	static int i;
-	if (!num)
-		printf("wh loop %i\n", i++);
-	else
+	int	*i;
+
 	// printf("Hello from thread %d!\n", *((int*)num));
-	printf("Hello from thread %d!\n", i);
+	pthread_mutex_lock(&lock);
+	i = (int *)num;
+	printf("Hello from thread %d!\n", *i);
+	pthread_mutex_unlock(&lock);
 	//printf("Hello ffrom thread %d!\n", num);
 	return NULL;
 }
@@ -21,7 +23,8 @@ int main(int ac, char **av)
 	pthread_t	*philo_threads;
 	t_input		input;
 	int			i;
-
+	int			*ptr_count;
+	pthread_mutex_init(&lock,NULL);
 	i = 0;
 	if (!check_input(&input, ac, av))
 		return (error_exit("Error: Invalid input data.", 1));
@@ -30,7 +33,10 @@ int main(int ac, char **av)
 		return(error_exit("Error: Malloc failed.", 2));
 	while (i < input.n_philo)
 	{
-		pthread_create(&philo_threads[i], NULL, &routine, (void *)&i);
+		ptr_count = (int *)malloc(sizeof(int));
+		*ptr_count = i;
+		pthread_create(&philo_threads[i], NULL, &routine, (void *)ptr_count);
+		free(ptr_count);
 		i++;
 	}
 	i = 0;
@@ -43,5 +49,7 @@ int main(int ac, char **av)
 		pthread_join(philo_threads[i++], NULL);
 	if (!input.not_ok)
 		ft_print_input(&input);
+	pthread_mutex_destroy(&lock);
+	free(ptr_count);
 	return(input.not_ok);
 }
