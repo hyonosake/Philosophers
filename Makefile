@@ -1,7 +1,8 @@
 NAME =		phil
-SRCS =		philo/philo_main/utils.c \
-			philo/philo_main/error.c \
-			philo/philo_main/main.c 
+SRCS =		philo/error.c \
+			philo/utils.c \
+			philo/routines.c \
+			philo/main.c 
 
 OBJS =		${SRCS:.c=.o}
 DOBJS =		${SRCS:.c=.d}

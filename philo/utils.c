@@ -1,5 +1,67 @@
 #include "./philosophers.h"
 
+int							philos_init(t_dining *dining)
+{
+	int						i;
+
+	i = 0;
+	dining->philos = (t_philo *)malloc(sizeof(t_philo) * dining->input.n_philos);
+	if (!dining->philos)
+		return (1);
+	while (i < dining->input.n_philos)
+	{
+		dining->philos[i].r_fork = i;
+		dining->philos[i].l_fork = i % dining->input.n_philos;
+		dining->philos[i].order = i + 1;
+		dining->philos[i].meals_done = 0;
+		dining->philos[i].is_dead = 0;
+		++i;
+	}
+	return 0;
+}
+
+int				threads_init(t_dining *dining)
+{
+	void		*arg;
+	int			i;
+	void		*philo;
+
+	i = 0;
+	//arg = (void *)dining;
+	//waiter function must be passed
+	if (pthread_create(&dining->supervisor, NULL, &supervisor_routine, arg))
+		return (1);
+	pthread_detach(dining->supervisor);
+	
+	return (0);
+}
+
+int							mutex_init(t_dining *dining)
+{
+	int						i;
+
+	i = 0;
+
+	while (i < dining->input.n_philos)
+		if (pthread_mutex_init(&dining->forks[i++], NULL))
+			return (1);
+	return (0); 
+}
+
+int							mutex_destroy(t_dining *dining)
+{
+	int						i;
+
+	i = 0;
+
+	while (i < dining->input.n_philos)
+		if (pthread_mutex_destroy(&dining->forks[i++]))
+			return (1);
+	return (0); 
+}
+
+
+
 int							check_input(t_data *input, int ac, char **av)
 {
 	if (ac < 5 || ac > 6)
@@ -26,7 +88,7 @@ int							check_input(t_data *input, int ac, char **av)
 	return (1);
 }
 
-void					ft_print_input(t_input *data)
+void					ft_print_dining(t_dining *data)
 {
 	printf("There are %d philosophers\n", data->input.n_philos);
 	printf("Time to die = %d ms\n", data->input.t_die);
