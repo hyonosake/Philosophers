@@ -1,51 +1,56 @@
 #include "./philosophers.h"
 
 
-int				init_philosophers(t_table *dining, t_philo *philos)
+t_philo		*init_philosophers(t_table *dining)
 {
 	int 		i;
-
+	t_philo		*philos;
 	i = 0;
-	philos = (t_philo *)malloc(sizeof(t_philo) * dining->data->n_philos);
+	philos = (t_philo *)calloc(sizeof(t_philo), dining->data->n_philos);
 	if (!philos)
-		return(error("Memory allocation for philos failed."));
+		//return(error_throw("Memory allocation for philos failed."));
+		return NULL;
 	philos->table = dining;
 	while(i < dining->data->n_philos)
 	{
 		philos[i].rfork = &dining->forks[i];
-		philos[i].lfork = &dining->forks[i % dining->data->n_philos];
+		philos[i].lfork = &dining->forks[(i+1) % dining->data->n_philos];
 		philos[i].meals_done = 0;
 		philos[i].status = 0;
-		philos[i].pos = ++i;
+		philos[i].pos = i + 1;
+		printf("philo's %d forks are: |r %d| |l %d|\n",philos[i].pos, i, (i+1) % dining->data->n_philos);
+		++i;
 	}
-	return (0);
+	return (philos);
 }
 
-int				monitor_death(t_philo *philos)
+void			*monitor_death(void *arg)
 {
 	int			i;
 	char		flag;
+	t_philo		*philos;
 
-	i = 0;
+	philos = (t_philo *)arg;
 	while(1)
 	{
 		i = 0;
-		while (i < philos->table->data)
+		while (i < philos->table->data->n_philos)
 		{
-			if (philos[i].status == DIEDED ||
-				philos[i].meals_done == philos->table->data->n_meals)
+			if (time_diff(philos[i].last_meal, get_time()) > (uint64_t)philos->table->data->t_die)
 			{
 				flag = 1;
+				philos[i].status = DIEDED;
 				break ;
 			}
 			++i;
-			if (flag)
-				break;
 		}
 		if (philos[i].status == DIEDED)
-			printf("Philosoph %d is dieded\n", i+1);
+		{
+			printf("%llu Philosopher %d is dieded\n", get_time() - philos->table->start_time, philos[i].pos);
+			break ;
+		}
 	}
-	return (flag);
+	return (NULL);
 }
 
 int				run_threads(t_philo *philos)
@@ -54,66 +59,93 @@ int				run_threads(t_philo *philos)
 	int			i;
 
 	i = 0;
+	//printf("pos = %d\n", philos->pos);
 	philos->table->start_time = get_time();
-	if (pthread_create(&supervisor, NULL, &supervisor_routine, (void *)philos));
-		return(error("Supervisor thread was not created."));
 	while (i < philos->table->data->n_philos)
 	{
 		philos[i].last_meal = philos->table->start_time;
-		if (pthread_create(&philos->table->threads[i++], 
-			NULL, &thread_routine, (void *)philos))
-			return(error("Philosopher threads were not created."));
-		usleep(1);
+		printf("here %d\n", i+1);
+		if (pthread_create(&philos->table->threads[i], 
+			NULL, &thread_routine, (void *)(&philos[i])))
+			return(error_throw("Philosopher threads were not created."));
+		i++;
+		//usleep(1);
+		printf("after here\n");
 	}
 	usleep(100);
+	printf("after here\n");
+	if (pthread_create(&supervisor, NULL, &monitor_death, (void *)philos))
+		return(error_throw("Supervisor thread was not created."));
 	monitor_death(philos);
 	return (0);
 }
-void take_forks();
+void	 take_forks(t_philo *philo)
+{
+	uint64_t	timestamp;
+	
+	//printf("hee\n");
+	timestamp = time_diff(philo->table->start_time, get_time());
+	//printf("%llu is\n", timestamp);
+	//printf("%llu starttime\n", philo->table->start_time);
+	if (philo->pos % 2 == 1)
+	{
+		pthread_mutex_lock(philo->lfork);
+		printf("%llu Philosopher %d has taken his left fork\n", timestamp, philo->pos);
+		pthread_mutex_lock(philo->rfork);
+		printf("%llu Philosopher %d has taken his right fork \n", timestamp, philo->pos);
+	}
+	else
+	{
+		pthread_mutex_lock(philo->rfork);
+		printf("%llu Philosopher %d has taken his right fork \n", timestamp, philo->pos);
+		pthread_mutex_lock(philo->lfork);
+		printf("%llu Philosopher %d has taken his left fork\n", timestamp, philo->pos);
+	}
+}
 
-void msg_display(uint64_t timestamp, int number, char status)
+
+
+
+void 	msg_display(uint64_t timestamp, int number, char status)
 {
 	//if (status == TOOK_FORKS)
 	//	printf("%lu Philosopher %d took %dfork\n")
 	if (status == EAT)
-		printf("%lu Philosopher %d is eating\n");
+		printf("%llu Philosopher %d is eating\n", timestamp, number);
 	else if (status == SLEEP)
-		printf("%lu Philosopher %d is sleeping\n");
+		printf("%llu Philosopher %d is sleeping\n", timestamp, number);
 	else if (status == THINK)
-		printf("%lu Philosopher %d is thinking\n");
+		printf("%llu Philosopher %d is thinking\n", timestamp, number);
 	else if (status == DIEDED)
-		printf("%lu Philosopher %d is dead\n");
+		printf("%llu Philosopher %d is dead\n", timestamp, number);
 
 }
 
 void		*thread_routine(void *arg)
 {
 	t_philo	*philosopher;
-	int		cycle;
-	int		sleeptime;
-
+	//uint64_t	cycle;
+	uint64_t	sleeping;
 	philosopher = (t_philo *)arg;
-	sleeptime =  philosopher->table->data->t_sleep;
-	cycle = philosopher->table->data->t_die;
 	while (1)
 	{
-		if (time_diff(philosopher->last_meal, get_time()) > cycle)
-			philosopher->status = DIEDED;
-		take_forks();
+		//if (time_diff(philosopher->last_meal, get_time()) > (uint64_t)philosopher->table->data->t_die)
+		//	philosopher->status = DIEDED;
+		take_forks(philosopher);
 		philosopher->last_meal = get_time();
-		msg_display(philosopher->last_meal, philosopher->pos, philosopher->status);
+		printf("%llu Philosopher %d is eating\n", get_time() - philosopher->table->start_time, philosopher->pos);     
+		while (time_diff(philosopher->last_meal, get_time()) < (uint64_t)philosopher->table->data->t_sleep)
+		{
+		}
 		pthread_mutex_unlock(philosopher->lfork);
 		pthread_mutex_unlock(philosopher->rfork);
-		if (time_diff(philosopher->last_meal, get_time()) > philosopher->table->data->t_die)
-			philosopher->status = DIEDED;
-		philosopher->status = SLEEP;
-		msg_display(philosopher->last_meal, philosopher->pos, philosopher->status);
-		while (sleeptime)
+		//cycle = get_time() - philosopher->table->start_time;
+		//philosopher->status = SLEEP;
+		printf("%llu Philosopher %d is sleeping\n", get_time() - philosopher->table->start_time, philosopher->pos);
+		printf("seg");
+		sleeping = get_time();
+		while (time_diff(sleeping, get_time()) < (uint64_t)philosopher->table->data->t_sleep)
 		{
-			sleeptime = time_diff(sleeptime, get_time());
-			cycle = time_diff(cycle, get_time());
-			if (cycle < 0);
-				break ;
 		}
 	}
 	return (NULL);

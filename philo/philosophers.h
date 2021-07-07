@@ -4,7 +4,7 @@
 # include <unistd.h>
 # include <pthread.h>
 # include <stdlib.h>
-# include <time.h>
+# include <sys/time.h>
 # include <stdlib.h>
 
 enum	e_state
@@ -44,6 +44,7 @@ typedef struct		s_philo
 	t_table			*table;
 	pthread_mutex_t	*lfork;
 	pthread_mutex_t	*rfork;
+	//pthread_t		thread;
 	int				pos;
 	int				last_meal;
 	int				meals_done;
@@ -53,13 +54,15 @@ typedef struct		s_philo
 
 int			error_throw(char *err_str);
 int			input_error_check(t_data *data); // basic check for input vals
-int			parse_input(int ac, char **av, t_data *data); // data malloc, parse vals and check them
+t_data		*parse_input(int ac, char **av); // data malloc, parse vals and check them
 int			ft_atoi(char *char_num);
-int			create_table(t_table *dining);	//dining malloc, mutex malloc and init, threads malloc
-int			init_philosophers(t_table *dining, t_philo *philos);
+t_table*			create_table(t_data *data);	//dining malloc, mutex malloc and init, threads malloc
+t_philo		*init_philosophers(t_table *dining);
 uint64_t	get_time(void);
-void		*supervisor_routine(void *arg);
+//void		*supervisor_routine(void *arg);
 void		*thread_routine(void *arg);
-int			monitor_death(t_philo *philos);
-
-#endif;
+void		*monitor_death(void *arg);
+uint64_t	time_diff(uint64_t start, uint64_t now);
+int			run_threads(t_philo *philos);
+void	 take_forks(t_philo *philo);
+#endif

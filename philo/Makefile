@@ -1,23 +1,24 @@
 NAME =		phil
-SRCS =		philo/error.c \
-			philo/utils.c \
-			philo/routines.c \
-			philo/main.c 
+SRCS =		./parse_check.c \
+			./routines.c \
+			./thread_management.c \
+			./utils.c \
+			./main.c
 
 OBJS =		${SRCS:.c=.o}
 DOBJS =		${SRCS:.c=.d}
-WWW =		-Wall -Wextra -Werror
-FLAGS =		$(WWW) -g -pthread #-O3 -msse3
+WWW =		
+FLAGS =		$(WWW) -g -MMD -pthread -fsanitize=address
 RM =		rm -rf
 CC =		gcc
 
-all:		$(NAME)
-
 %.o: %.c
-			$(CC) $(FLAGS) -c $< -o $@
+			$(CC) -I philosophers.h $(FLAGS) -c $< -o $@
 
 $(NAME):	${OBJS} 
-			$(CC) -g $(OBJS)  -o $(NAME)
+			$(CC) $(OBJS)  -o $(NAME)
+
+all:		$(NAME)
 
 clean:		
 			$(RM) $(OBJS)
@@ -26,12 +27,12 @@ fclean:		clean
 			$(RM) $(NAME)
 re:			fclean all
 norm:		fclean
-			norminette phlo/*.c  
+			norminette ./*.c  
 run:		
 			make re
-			./phil 4 410 200 200
+			./phil 5 800 200 200
 bonus:		all
 
 .PHONY: all clean fclean re run bonus 
-.SILENT:
+#.SILENT:
 -include $(DOBJS)
