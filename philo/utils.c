@@ -38,22 +38,19 @@ uint64_t			time_diff(uint64_t start, uint64_t now)
 	return (now - start);
 }
 
-int					mutex_init(t_table *dining)
+int			error_throw(char *err_str)
 {
-	int				i;
+	printf("Error: %s\n", err_str);
+	return (1);
+}
 
-	i = 0;
-	dining->forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) *
-						dining->n_philos);
-	if (!dining->forks)
-		return(error_throw("Memory allocation for forks(mutex) failed."));
-	while (i < dining->n_philos)
-	{
-		if (pthread_mutex_init(&dining->forks[i], NULL))
-			return(error_throw("Initializing forks(mutex) failed."));
-		++i;
-	}
-	return (0);
+void				print_dining_table(t_table *dining)
+{
+	printf("==== DINING TABLE ====\n");
+	printf("\t---DATA---\n");
+	printf("n_philos %d\n", (dining->data)->n_philos);
+	printf("t_die\t %d\n", (dining->data)->t_die);
+	//printf("dining->philos[i].pos", (dining->philos[2]).pos);
 }
 
 //void				free_struct(t_philo *philo)
