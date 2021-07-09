@@ -1,29 +1,31 @@
-#include "philosophers.h"
+#include "./philosophers.h"
 
 int			main(int ac, char **av)
 {
-	// free needed //
-	t_data	*data;
-	t_philo	*philos;
 	t_table	*dining;
+	t_philo	*philos;
+	t_data	*data;
 
-	philos = NULL;
-	data = NULL;
-	dining = NULL;
-	// 1. Data input + check
-	//parse_input(ac, av, &data, &dining);
-	if (parse_input_data(ac, av, &data))
+	data = data_init(ac, av); // data
+	if (!data)
 		return (1);
-	if (create_dining_table(&dining, data))
+	
+	dining = dining_init(data); // dining + forks
+	if (!dining)
 		return (1);
-	if (mutex_init(dining, data))
+	//dining->data = data;
+	philos = philos_init(dining);
+	if (!philos)
+	{
+		printf("GG\n");
 		return (1);
-	if (philosophers_init(dining->philos, data, dining))
+	}
+	dining->philos = philos; // philos + threads per philo
+	if (!dining->philos)
 		return (1);
-	// print_dining_table(dining);
-	printf(">???\n");
-	if (run_threads(dining, &philos, data))
-		return (1);
-	//free all vals
+	printf("he\n");
+	start_threads(dining, philos);
+	//while(status)
 	return (0);
 }
+

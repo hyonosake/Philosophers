@@ -1,14 +1,14 @@
 NAME =		phil
-SRCS =		./parse_check.c \
+SRCS =		./init_structs.c \
 			./routines.c \
-			./thread_management.c \
+			./threads.c \
 			./utils.c \
 			./main.c
 
 OBJS =		${SRCS:.c=.o}
 DOBJS =		${SRCS:.c=.d}
 WWW =		
-FLAGS =		$(WWW) -g -MMD -pthread -fsanitize=address
+FLAGS =		$(WWW) -g -MMD -pthread #-fsanitize=address
 RM =		rm -rf
 CC =		gcc
 

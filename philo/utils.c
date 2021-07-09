@@ -1,71 +1,75 @@
-#include "./philosophers.h"
+#include "philosophers.h"
 
-int			ft_atoi(char *char_num)
+size_t			ft_strlen(char *s)
 {
-    int		num;
-    int		sign_flag;
+	size_t		i;
 
-    sign_flag = 0;
-    num = 0;
-    if (!char_num)
-        return(num);
-	while(*char_num == ' ' || (*char_num > 8 && *char_num < 14))
-		char_num++;
-    while(*char_num == '+' || *char_num == '-')
-    {
-        if (*char_num == '-')
-			return(-1);
-    }
-	while (*char_num >= '0' && *char_num <= '9')
-	{
-		num = num * 10 + (*char_num - '0');
-		char_num++;
-	}
-	if (*char_num)
-		return -1;
-    return(num);
+	i = 0;
+	while (s[i])
+		++i;
+	return(i);
 }
 
-uint64_t			get_time(void)
+void		*error_null(char *str, t_table *dining)
 {
-	struct timeval	tv;
-	gettimeofday(&tv, NULL);
-	return(tv.tv_sec * 1000 + tv.tv_usec * 0.001);
+	free_structs(dining);
+	write(1, str, ft_strlen(str));
+	write(1, "\n", 1);
+	return (NULL);
 }
 
-uint64_t			time_diff(uint64_t start, uint64_t now)
+int			error_int(char *str, t_data *data)
 {
-	return (now - start);
-}
-
-int			error_throw(char *err_str)
-{
-	printf("Error: %s\n", err_str);
+	free(data);
+	write(1, str, ft_strlen(str));
+	write(1, "\n", 1);
 	return (1);
 }
 
-void				print_dining_table(t_table *dining)
+uint32_t	ft_atoi(char *s)
 {
-	printf("==== DINING TABLE ====\n");
-	printf("\t---DATA---\n");
-	printf("n_philos %d\n", (dining->data)->n_philos);
-	printf("t_die\t %d\n", (dining->data)->t_die);
-	//printf("dining->philos[i].pos", (dining->philos[2]).pos);
+	int		num;
+	int		i;
+
+	num = 0;
+	i = 0;
+	while (s[i] >= '0' && s[i] <= '9')
+	{
+		num = num * 10 + (s[i] - '0');
+		i++;
+	}
+	if (s[i])
+		return (-1);
+	return (num);
 }
 
-//void				free_struct(t_philo *philo)
-//{
-//	if(philo)
-//	{
 
-//		if (philo->table->data)
-//			free(philo->table->data);
-//		if (philo->table->threads)
-//			free(philo->table->threads);
-//		if (philo->table->forks)
-//			free(philo->table->forks);
-//		if (philo->table)
-//			free(philo->table);
-//		free(philo);
-//	}
-//}
+void	free_structs(t_table *dining)
+{
+	if (dining)
+	{
+		if (dining->philos)
+		{
+			if ((dining->philos)->thread)
+				free((dining->philos)->thread);
+			free(dining->philos);
+		}
+		if (dining->data)
+			free(dining->data);
+		if (dining->forks)
+			free(dining->forks);
+		free(dining);
+	}
+}
+
+uint64_t	time_now()
+{
+	struct timeval	tv;
+	gettimeofday(&tv, NULL);
+	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
+}
+
+uint64_t	time_diff(uint64_t timestamp)
+{
+	return (time_now() - timestamp);
+}
