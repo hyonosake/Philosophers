@@ -13,7 +13,7 @@ RM =		rm -rf
 CC =		gcc
 
 %.o: %.c
-			$(CC) -I philosophers.h $(FLAGS) -c $< -o $@
+			$(CC) $(FLAGS) -c $< -o $@
 
 $(NAME):	${OBJS} 
 			$(CC) $(OBJS)  -o $(NAME)
@@ -30,7 +30,9 @@ norm:		fclean
 			norminette ./*.c  
 run:		
 			make re
+			make clean
 			./phil 5 800 200 200
+
 bonus:		all
 
 .PHONY: all clean fclean re run bonus 
