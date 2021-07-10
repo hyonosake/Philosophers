@@ -1,15 +1,15 @@
-#include "philososphers.h"
+#include "philosophers.h"
 
-int		check_errors(t_table *table)
+int	check_errors(t_table *table)
 {
 	if (table->data->n_philos < 2)
-		return(int_error("Number of philos must be 2 or more.", table));
+		return (int_error("Number of philos must be 2 or more.", table));
 	if (table->data->t_eat < 0)
-		return(int_error("Time to eat must be a positive value.", table));
+		return (int_error("Time to eat must be a positive value.", table));
 	if (table->data->t_sleep < 0)
-		return(int_error("Time to sleep must be a positive value.", table));
+		return (int_error("Time to sleep must be a positive value.", table));
 	if (table->data->t_die < 0)
-		return(int_error("Time to live (die) must be a positive value.", table));
+		return (int_error("Time to live must be a positive value.", table));
 	return (0);
 }
 
@@ -35,11 +35,11 @@ t_data	*data_init(int ac, char **av, t_table **table)
 			return (null_error("N meals must be more than 1.", *table));
 	}
 	if (check_errors(*table))
-		return(NULL);
+		return (NULL);
 	return (data);
 }
 
-pthread_mutex_t 	*forks_init(t_table *table)
+pthread_mutex_t	*forks_init(t_table *table)
 {
 	pthread_mutex_t	*forks;
 	int				fork_size;
@@ -56,13 +56,11 @@ pthread_mutex_t 	*forks_init(t_table *table)
 		if (pthread_mutex_init(&forks[i], NULL))
 			return (null_error("Initializing forks failed.", table));
 		++i;
-
 	}
-
 	return (forks);
 }
 
-t_philo				*philos_init(t_table *table, pthread_mutex_t *forks)
+t_philo	*philos_init(t_table *table, pthread_mutex_t *forks)
 {
 	t_philo			*philos;
 	int				i;
@@ -72,19 +70,18 @@ t_philo				*philos_init(t_table *table, pthread_mutex_t *forks)
 	n_philos = table->data->n_philos;
 	i = 0;
 	philos = (t_philo *)malloc(sizeof(t_philo) * n_philos);
-	if (!(table->philos))
+	if (!philos)
 		return (null_error("Memory alloc for philos failed", table));
 	while (i < n_philos)
 	{
 		philos[i].pos = i + 1;
+		philos[i].status = 0;
 		philos[i].odd = (philos[i].pos % 2 == 1);
 		philos[i].forks[0] = &forks[i];
 		philos[i].forks[1] = &forks[(i + 1) % n_philos];
 		philos[i].meals_done = 0;
 		philos[i].print = &(table->print);
 		++i;
-		//usleep_timer(2);
 	}
-	//usleep_timer(50);
 	return (philos);
 }

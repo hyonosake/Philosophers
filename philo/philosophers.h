@@ -8,19 +8,12 @@
 # include <sys/time.h>
 # include <stdlib.h>
 # include <stdbool.h>
+# define START 0
+# define EAT 1
+# define FINISHED 2
+# define DIEDED 3
 
-enum	e_state
-{
-	START,
-	EAT,
-	TOOK_FORKS,
-	SLEEP,
-	THINK,
-	FINISHED,
-	DIEDED
-}		t_state;
-
-typedef struct		s_data
+typedef struct s_data
 {
 	uint64_t		start_time;
 	int				t_die;
@@ -30,7 +23,7 @@ typedef struct		s_data
 	int				n_meals;
 }					t_data;
 
-typedef struct		s_philo
+typedef struct s_philo
 {
 	uint64_t		last_meal;
 	t_data			data;
@@ -43,7 +36,7 @@ typedef struct		s_philo
 	char			status;
 }					t_philo;
 
-typedef struct		s_table
+typedef struct s_table
 {
 	t_data			*data;
 	t_philo			*philos;
@@ -56,10 +49,10 @@ int					int_error(char *s, t_table *table);
 void				usleep_timer(uint64_t mils_needed);
 void				*null_error(char *s, t_table *table);
 void				print_data(t_data *data);
-uint64_t			time_now();
+uint64_t			time_now(void);
 uint64_t			time_diff(uint64_t timestamp);
 t_data				*data_init(int ac, char **av, t_table **table);
-pthread_mutex_t 	*forks_init(t_table *table);
+pthread_mutex_t		*forks_init(t_table *table);
 t_philo				*philos_init(t_table *table, pthread_mutex_t *forks);
 int					run_threads(t_table *table, t_philo *philos);
 int					supervise(t_table *table, t_philo *philos);
@@ -69,5 +62,7 @@ void				philo_sleep(t_philo *philo);
 void				philo_take_forks(t_philo *philo);
 int					finish_thread_stuff(t_table *table);
 void				ft_free(t_table *table);
+int					philo_death(t_table *table, int i);
+int					philo_finished(t_table *table);
 
 #endif

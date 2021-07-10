@@ -1,6 +1,6 @@
-#include "philososphers.h"
+#include "philosophers.h"
 
-int					main(int ac, char **av)
+int	main(int ac, char **av)
 {
 	t_table			*table;
 	int				res;
@@ -18,6 +18,5 @@ int					main(int ac, char **av)
 		return (1);
 	res = run_threads(table, table->philos);
 	ft_free(table);
-	return (res);;
-	return (0);
+	return (res);
 }
