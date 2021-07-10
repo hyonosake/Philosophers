@@ -3,7 +3,7 @@ SRCS =		./init_structs.c \
 			./routines.c \
 			./threads.c \
 			./utils.c \
-			./utils_2 \
+			./utils_2.c \
 			./main.c
 
 OBJS =		${SRCS:.c=.o}
