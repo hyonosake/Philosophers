@@ -19,6 +19,7 @@ int	run_threads(t_table *table, t_philo *philos)
 		++i;
 		usleep(1);
 	}
+	usleep_timer(100);
 	return (supervise(table, table->philos));
 }
 

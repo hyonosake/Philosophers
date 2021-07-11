@@ -16,11 +16,11 @@
 typedef struct s_data
 {
 	uint64_t		start_time;
-	int				t_die;
-	int				t_sleep;
-	int				t_eat;
-	int				n_philos;
-	int				n_meals;
+	uint64_t		t_die;
+	uint64_t		t_sleep;
+	uint64_t		t_eat;
+	uint64_t		n_philos;
+	uint64_t		n_meals;
 }					t_data;
 
 typedef struct s_philo
