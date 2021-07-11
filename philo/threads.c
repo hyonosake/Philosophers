@@ -8,8 +8,11 @@ int	run_threads(t_table *table, t_philo *philos)
 	i = 0;
 	n_phil = table->data->n_philos;
 	table->data->start_time = time_now();
+
 	while (i < n_phil)
 	{
+		philos[i].data.start_time = table->data->start_time;
+		philos[i].last_meal = table->data->start_time;
 		philos[i].data = *(table->data);
 		philos[i].meals_done = 0;
 		philos[i].status = START;
@@ -17,7 +20,7 @@ int	run_threads(t_table *table, t_philo *philos)
 				&thread_routine, (void *)(&philos[i])))
 			return (int_error("Failed to init pthread of a philo.", table));
 		++i;
-		usleep(1);
+		//usleep(1);
 	}
 	usleep_timer(100);
 	return (supervise(table, table->philos));

@@ -64,5 +64,5 @@ int					finish_thread_stuff(t_table *table);
 void				ft_free(t_table *table);
 int					philo_death(t_table *table, int i);
 int					philo_finished(t_table *table);
-
+void				eat_timer(t_philo *philo);
 #endif

@@ -29,22 +29,21 @@ void	philo_eat(t_philo *philo)
 	printf("%lld %d is eating.\n",
 		time_diff(philo->data.start_time), philo->pos);
 	pthread_mutex_unlock(philo->print);
-	philo->last_meal = time_now();
-	usleep_timer(philo->data.t_eat);
+	//usleep_timer(philo->data.t_eat);
+	eat_timer(philo);
 	pthread_mutex_unlock(philo->forks[philo->odd]);
 	pthread_mutex_unlock(philo->forks[!(philo->odd)]);
-	philo->meals_done++;
 }
 
 void	*thread_routine(void *arg)
 {
 	t_philo		*philo;
-	uint64_t	now;
+	//uint64_t	now;
 
 	philo = (t_philo *)arg;
-	now = time_now();
-	philo->data.start_time = now;
-	philo->last_meal = now;
+	//now = time_now();
+	//philo->data.start_time = now;
+	//philo->last_meal = now;
 	while (1)
 	{
 		pthread_mutex_lock(philo->print);
