@@ -10,13 +10,13 @@ int	main(int ac, char **av)
 		return (1);
 	if (!data_init(ac, av, &table))
 		return (1);
-	table->forks = forks_init(table);
+	semaphores_init(table);
 	if (!table->forks)
 		return (1);
-	table->philos = philos_init(table, table->forks);
+	table->philos = philos_init(table);
 	if (!(table->philos))
 		return (1);
-	res = run_threads(table, table->philos);
+	res = run_forks(table, table->philos);
 	ft_free(table);
 	return (res);
 }

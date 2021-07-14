@@ -7,21 +7,18 @@ int	run_threads(t_table *table, t_philo *philos)
 
 	i = 0;
 	n_phil = table->data->n_philos;
-	table->data->start_time = time_now();
-
 	while (i < n_phil)
 	{
-		philos[i].data.start_time = table->data->start_time;
-		philos[i].last_meal = table->data->start_time;
-		philos[i].data = *(table->data);
-		philos[i].meals_done = 0;
-		philos[i].status = START;
+		//philos[i].data = *(table->data);
+		//philos[i].data.start_time = time_now();
+		philos[i].last_meal = time_now();
 		if (pthread_create(&(philos[i].thread), NULL,
 				&thread_routine, (void *)(&philos[i])))
 			return (int_error("Failed to init pthread of a philo.", table));
 		++i;
-		//usleep(1);
+		//usleep_timer(1);
 	}
+	table->data->start_time = philos[0].data.start_time;
 	usleep_timer(100);
 	return (supervise(table, table->philos));
 }
@@ -37,7 +34,7 @@ int	supervise(t_table *table, t_philo *philos)
 		meals_done_flag = 1;
 		while (i < table->data->n_philos)
 		{
-			meals_done_flag *= (int)(philos[i].status);
+			meals_done_flag *= philos[i].status;
 			if (time_diff(philos[i].last_meal) > philos[i].data.t_die)
 				return (philo_death(table, i));
 			++i;
@@ -45,6 +42,7 @@ int	supervise(t_table *table, t_philo *philos)
 		if (meals_done_flag)
 			return (FINISHED);
 		i = 0;
+		usleep(5);
 	}
 	return (0);
 }
@@ -62,4 +60,22 @@ int	finish_thread_stuff(t_table *table)
 		pthread_join((table->philos)[i].thread, NULL);
 	}
 	return (0);
-}		
+}
+
+int	philo_death(t_table *table, int i)
+{
+	pthread_mutex_lock(&table->print);
+	printf("\033[0;31m");
+	printf("%lld %d just passed away...\n",
+		time_diff((table->philos)[i].data.start_time), i + 1);
+	return (DIEDED);
+}
+
+int	philo_finished(t_table *table)
+{
+	pthread_mutex_lock(&table->print);
+	printf("\033[0;32m");
+	printf("%lld Well, that was a torture for them anyway...\n",
+		time_diff((table->philos)[0].data.start_time));
+	return (FINISHED);
+}

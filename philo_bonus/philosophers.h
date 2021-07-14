@@ -1,5 +1,5 @@
-#ifndef PHILOSOPHERS_H
-# define PHILOSOPHERS_H
+#ifndef PHILO_BONUS_H
+# define PHILO_BONUS_H
 
 # include <stdio.h>
 # include <unistd.h>
@@ -9,6 +9,10 @@
 # include <stdlib.h>
 # include <stdbool.h>
 # include <string.h>
+# include <semaphore.h>
+# include <signal.h>
+# include <sys/wait.h>
+
 # define START 0
 # define EAT 1
 # define FINISHED 2
@@ -28,9 +32,10 @@ typedef struct s_philo
 {
 	uint64_t		last_meal;
 	t_data			data;
-	pthread_mutex_t	*forks[2];
+	pid_t			pid;
+	sem_t			*print;
+	sem_t			*forks;
 	pthread_t		thread;
-	pthread_mutex_t	*print;
 	bool			odd;
 	int				pos;
 	int				meals_done;
@@ -41,23 +46,22 @@ typedef struct s_table
 {
 	t_data			*data;
 	t_philo			*philos;
-	pthread_mutex_t	print;
-	pthread_mutex_t	*forks;
+	sem_t			*print;
+	sem_t			*forks;
 }					t_table;
 
 int					ft_strlen(char *s);
-int					int_error(char *s, t_table *table);
+void				error_throw(char *s, t_table *table);
 void				usleep_timer(uint64_t mils_needed);
-void				*null_error(char *s, t_table *table);
 void				print_data(t_data *data);
 uint64_t			time_now(void);
 uint64_t			time_diff(uint64_t timestamp);
 t_data				*data_init(int ac, char **av, t_table **table);
-pthread_mutex_t		*forks_init(t_table *table);
-t_philo				*philos_init(t_table *table, pthread_mutex_t *forks);
-int					run_threads(t_table *table, t_philo *philos);
+void				semaphores_init(t_table *table);
+t_philo				*philos_init(t_table *table);
+int					run_forks(t_table *table, t_philo *philos);
 int					supervise(t_table *table, t_philo *philos);
-void				*thread_routine(void *arg);
+void				*process_routine(t_philo *philo);
 void				philo_eat(t_philo *philo);
 void				philo_sleep(t_philo *philo);
 void				philo_take_forks(t_philo *philo);

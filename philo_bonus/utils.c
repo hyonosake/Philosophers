@@ -10,22 +10,6 @@ int	ft_strlen(char *s)
 	return (i);
 }
 
-int	int_error(char *s, t_table *table)
-{
-	ft_free(table);
-	write(1, s, ft_strlen(s));
-	write(1, "\n", 1);
-	return (1);
-}
-
-void	*null_error(char *s, t_table *table)
-{
-	ft_free(table);
-	write(1, s, ft_strlen(s));
-	write(1, "\n", 1);
-	return (NULL);
-}
-
 int	ft_atoi(char *s)
 {
 	int	i;
@@ -46,8 +30,8 @@ void	ft_free(t_table *table)
 	{
 		if (table->data)
 			free(table->data);
-		if (table->forks)
-			free(table->forks);
+		//if (table->forks)
+		//	free(table->forks);
 		if (table->philos)
 			free(table->philos);
 		free(table);

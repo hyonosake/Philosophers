@@ -22,7 +22,10 @@ void	eat_timer(t_philo *philo)
 	start = time_now();
 	philo->meals_done++;
 	while (time_diff(start) < philo->data.t_eat)
+	{
 		philo->last_meal = time_now();
+	}
+	philo->last_meal = time_now();
 }
 
 uint64_t	time_now(void)
@@ -40,4 +43,11 @@ void	*ft_calloc(int size_of, int n)
 	memory = (void *)malloc(size_of * n);
 	memset(memory, 0, size_of * n);
 	return (memory);
+}
+
+void	error_throw(char *s, t_table *table)
+{
+	printf("%s\n", s);
+	ft_free(table);
+	exit(0);
 }

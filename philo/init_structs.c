@@ -2,8 +2,6 @@
 
 int	check_errors(t_table *table)
 {
-	if (table->data->n_philos < 2)
-		return (int_error("Number of philos must be 2 or more.", table));
 	if (table->data->t_eat < 0)
 		return (int_error("Time to eat must be a positive value.", table));
 	if (table->data->t_sleep < 0)
@@ -17,7 +15,7 @@ t_data	*data_init(int ac, char **av, t_table **table)
 {
 	t_data	*data;
 
-	data = (t_data *)malloc(sizeof(t_data));
+	data = (t_data *)ft_calloc(sizeof(t_data), 1);
 	if (!data)
 		return (null_error("Memory alloc for data failed.", *table));
 	if (ac < 5 || ac > 6)
@@ -46,7 +44,7 @@ pthread_mutex_t	*forks_init(t_table *table)
 	int				i;
 
 	fork_size = sizeof(pthread_mutex_t);
-	forks = (pthread_mutex_t *)malloc(fork_size * table->data->n_philos);
+	forks = (pthread_mutex_t *)ft_calloc(fork_size, table->data->n_philos);
 	if (!forks)
 		return (null_error("Memory alloc for forks failed.", table));
 	i = 0;
@@ -69,11 +67,13 @@ t_philo	*philos_init(t_table *table, pthread_mutex_t *forks)
 
 	n_philos = table->data->n_philos;
 	i = 0;
-	philos = (t_philo *)malloc(sizeof(t_philo) * n_philos);
+	philos = (t_philo *)ft_calloc(sizeof(t_philo), n_philos);
 	if (!philos)
 		return (null_error("Memory alloc for philos failed", table));
+	table->data->start_time = time_now();
 	while (i < n_philos)
 	{
+		philos[i].data = *table->data;
 		philos[i].pos = i + 1;
 		philos[i].status = 0;
 		philos[i].odd = (philos[i].pos % 2 == 1);
