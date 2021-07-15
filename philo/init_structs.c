@@ -20,15 +20,15 @@ t_data	*data_init(int ac, char **av, t_table **table)
 		return (null_error("Memory alloc for data failed.", *table));
 	if (ac < 5 || ac > 6)
 		return (null_error("N arguments is invalid.", *table));
-	data->n_philos = atoi(av[1]);
-	data->t_die = atoi(av[2]);
-	data->t_eat = atoi(av[3]);
-	data->t_sleep = atoi(av[4]);
-	data->n_meals = 0;
+	data->n_philos = ft_atoi(av[1]);
+	data->t_die = ft_atoi(av[2]);
+	data->t_eat = ft_atoi(av[3]);
+	data->t_sleep = ft_atoi(av[4]);
+	data->n_meals = -1;
 	(*table)->data = data;
 	if (av[5])
 	{
-		data->n_meals = atoi(av[5]);
+		data->n_meals = ft_atoi(av[5]);
 		if (data->n_meals < 1)
 			return (null_error("N meals must be more than 1.", *table));
 	}

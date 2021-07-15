@@ -36,7 +36,7 @@ int	ft_atoi(char *s)
 	while (s[i] >= '0' && s[i] <= '9')
 		num = num * 10 + (s[i++] - '0');
 	if (s[i])
-		return (-1);
+		return (-2);
 	return (num);
 }
 

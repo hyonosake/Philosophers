@@ -9,17 +9,13 @@ int	run_threads(t_table *table, t_philo *philos)
 	n_phil = table->data->n_philos;
 	while (i < n_phil)
 	{
-		//philos[i].data = *(table->data);
-		//philos[i].data.start_time = time_now();
-		philos[i].last_meal = time_now();
 		if (pthread_create(&(philos[i].thread), NULL,
 				&thread_routine, (void *)(&philos[i])))
 			return (int_error("Failed to init pthread of a philo.", table));
 		++i;
-		//usleep_timer(1);
 	}
 	table->data->start_time = philos[0].data.start_time;
-	usleep_timer(100);
+	usleep_timer(50);
 	return (supervise(table, table->philos));
 }
 
@@ -38,11 +34,10 @@ int	supervise(t_table *table, t_philo *philos)
 			if (time_diff(philos[i].last_meal) > philos[i].data.t_die)
 				return (philo_death(table, i));
 			++i;
+			if (philos[i].status == FINISHED)
+				return(philo_finished(table));
 		}
-		if (meals_done_flag)
-			return (FINISHED);
 		i = 0;
-		usleep(5);
 	}
 	return (0);
 }

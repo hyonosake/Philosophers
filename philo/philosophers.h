@@ -49,6 +49,7 @@ int					ft_strlen(char *s);
 int					int_error(char *s, t_table *table);
 void				usleep_timer(uint64_t mils_needed);
 void				*null_error(char *s, t_table *table);
+int					ft_atoi(char *s);
 void				print_data(t_data *data);
 uint64_t			time_now(void);
 uint64_t			time_diff(uint64_t timestamp);
