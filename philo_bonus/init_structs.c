@@ -45,8 +45,11 @@ void				semaphores_init(t_table *table)
 
 	sem_unlink("/forks");
 	sem_unlink("/print");
+	sem_unlink("/dead");
 	table->forks = sem_open("/forks", O_CREAT | O_EXCL, 0644, table->data->n_philos);
 	table->print = sem_open("/print", O_CREAT | O_EXCL, 0644, 1);
+	table->dead = sem_open("/print", O_CREAT | O_EXCL, 0644, 1);
+	sem_wait(table->dead);
 }
 
 t_philo	*philos_init(t_table *table)
@@ -60,8 +63,10 @@ t_philo	*philos_init(t_table *table)
 	philos = (t_philo *)ft_calloc(sizeof(t_philo), n_philos);
 	if (!philos)
 		error_throw("Memory alloc for philos failed", table);
+	table->data->start_time = time_now();
 	while (i < n_philos)
 	{
+		philos[i].data = table->data;
 		philos[i].print = table->print;
 		philos[i].forks = table->forks;
 		philos[i].pos = i + 1;

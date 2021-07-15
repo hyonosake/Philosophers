@@ -36,6 +36,8 @@ run:
 
 bonus:		all
 
+a:			all clean
+
 .PHONY: all clean fclean re run bonus 
 #.SILENT:
 -include $(DOBJS)

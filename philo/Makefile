@@ -35,7 +35,8 @@ run:
 			./phil 5 800 200 200
 
 bonus:		all
+a:			all clean
 
-.PHONY: all clean fclean re run bonus 
+.PHONY: all clean fclean re run bonus a
 #.SILENT:
 -include $(DOBJS)

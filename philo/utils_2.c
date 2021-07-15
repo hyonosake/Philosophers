@@ -11,9 +11,7 @@ void	usleep_timer(uint64_t mils_needed)
 
 	start = time_now();
 	while (time_diff(start) < mils_needed)
-	{
 		usleep(500);
-	}
 }
 
 void	eat_timer(t_philo *philo)
@@ -23,10 +21,7 @@ void	eat_timer(t_philo *philo)
 	start = time_now();
 	philo->meals_done++;
 	while (time_diff(start) < philo->data.t_eat)
-	{
 		usleep(500);
-	}
-	//philo->last_meal = time_now();
 }
 
 uint64_t	time_now(void)

@@ -31,10 +31,11 @@ typedef struct s_data
 typedef struct s_philo
 {
 	uint64_t		last_meal;
-	t_data			data;
+	t_data			*data;
 	pid_t			pid;
 	sem_t			*print;
 	sem_t			*forks;
+	sem_t			*dead;
 	pthread_t		thread;
 	bool			odd;
 	int				pos;
@@ -48,6 +49,7 @@ typedef struct s_table
 	t_philo			*philos;
 	sem_t			*print;
 	sem_t			*forks;
+	sem_t			*dead;
 }					t_table;
 
 int					ft_strlen(char *s);
