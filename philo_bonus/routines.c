@@ -25,17 +25,18 @@ void	philo_cycle(t_philo *philo)
 void	*process_routine(t_philo *philo)
 {
 	philo->last_meal = time_now();
+	printf("Started\t\t%lld\nLast meal was\t%lld\n", philo->data->start_time, philo->last_meal);
 	while (philo->data->n_meals && philo->status == START)
 	{
 		print_message(philo, "is thinking.");
 		philo_cycle(philo);
-		if (philo->meals_done == philo->data->n_meals)
-			break ;
-		if (time_diff(philo->last_meal) > philo->data->t_die)
-		{
-			printf("Here\n");
-			sem_post(philo->dead);
-		}
+		//if (philo->meals_done == philo->data->n_meals)
+		//	break ;
+		//if (time_diff(philo->last_meal) > philo->data->t_die)
+		//{
+		//	printf("Here\n");
+		//	sem_post(philo->dead);
+		//}
 	}
 	philo->status = FINISHED;
 	return (NULL);

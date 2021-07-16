@@ -16,25 +16,26 @@ int	run_forks(t_table *table, t_philo *philos)
 
 	i = 0;
 	n_phil = table->data->n_philos;
+	table->data->start_time = time_now();
 	while (i < n_phil)
 	{
-		(philos + i)->data->start_time = time_now();
+		(philos + i)->data = table->data;
 		philos[i].meals_done = 0;
-		if ((pid_i = fork()) < 0)
-			error_throw("Fork error failed", table);
-		else if (pid_i == 0)
+		philos[i].pid = fork();
+		if (philos[i].pid < 0)
+			error_throw("Failed to fork.", table);
+		else if (!philos[i].pid)
 		{
+			printf("Gone in routine, bruh\n");
+			process_routine(&(philos[i]));
+			exit(0);
 		}
-		else
-		{
-			philos[i].pid = pid_i;
-			process_routine(&philos[i]);
-		}
+		usleep(100);
 		++i;
 	}
+
 	usleep(1000);
-	table->data->start_time = time_now();
-	return (supervise(table, table->philos));
+	//return (supervise(table, table->philos));
 	return (0);
 }
 
