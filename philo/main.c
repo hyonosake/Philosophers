@@ -3,7 +3,7 @@
 int	main(int ac, char **av)
 {
 	t_table			*table;
-	int				res;
+	int					res;
 
 	table = (t_table *)ft_calloc(sizeof(t_table), 1);
 	if (!table)

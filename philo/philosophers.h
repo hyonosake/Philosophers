@@ -43,7 +43,7 @@ typedef struct s_table
 	t_philo			*philos;
 	pthread_mutex_t	print;
 	pthread_mutex_t	*forks;
-}					t_table;
+}							t_table;
 
 int					ft_strlen(char *s);
 int					int_error(char *s, t_table *table);

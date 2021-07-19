@@ -1,4 +1,4 @@
-NAME =		phil
+NAME =		philo
 SRCS =		./init_structs.c \
 			./routines.c \
 			./threads.c \

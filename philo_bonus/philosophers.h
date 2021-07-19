@@ -45,6 +45,7 @@ typedef struct s_philo
 
 typedef struct s_table
 {
+	pthread_t		monitor;
 	t_data			*data;
 	t_philo			*philos;
 	sem_t			*print;
@@ -57,12 +58,13 @@ void				error_throw(char *s, t_table *table);
 void				usleep_timer(uint64_t mils_needed);
 void				print_data(t_data *data);
 uint64_t			time_now(void);
+int					ft_atoi(char *s);
 uint64_t			time_diff(uint64_t timestamp);
 t_data				*data_init(int ac, char **av, t_table **table);
 void				semaphores_init(t_table *table);
 t_philo				*philos_init(t_table *table);
 int					run_forks(t_table *table, t_philo *philos);
-int					supervise(t_table *table, t_philo *philos);
+void				*supervise(void *arg);
 void				*process_routine(t_philo *philo);
 void				philo_eat(t_philo *philo);
 void				philo_sleep(t_philo *philo);

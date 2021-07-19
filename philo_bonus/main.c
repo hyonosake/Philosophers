@@ -17,7 +17,6 @@ int	main(int ac, char **av)
 	if (!(table->philos))
 		return (1);
 	res = run_forks(table, table->philos);
-	sem_wait(table->dead);
 	i = 0;
 	while (i < table->data->n_philos)
 	{

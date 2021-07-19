@@ -22,22 +22,46 @@ void	philo_cycle(t_philo *philo)
 	usleep_timer(philo->data->t_sleep);
 }
 
+void *death_monitor(void *arg)
+{
+	t_philo	*philo;
+
+	philo = (t_philo *)arg;
+	//printf("Lmeal = %lld\n", philo->last_meal);
+	while (1)
+	{
+		if (time_diff(philo->last_meal) > philo->data->t_die)
+		{
+			//printf("ARGHR\n");
+			//sem_wait(philo->print);
+			sem_wait(philo->print);
+			printf("\033[0;31m");
+			printf("%lld %d just passed away...\n",
+			time_diff(philo->data->start_time), philo->pos);
+			//printf("????\n");
+			sem_post(philo->dead);
+			break ;
+		}
+	}
+	//printf("Broke in thread from dead\n");
+	return (NULL);
+}
+
 void	*process_routine(t_philo *philo)
 {
+	//printf("Lmeal_routine = %lld\n", philo->last_meal);
+	if (pthread_create(&philo->thread, NULL, &death_monitor, (void *)philo))
+		error_throw("Failed to run philo monitor thread,", NULL);
 	philo->last_meal = time_now();
-	printf("Started\t\t%lld\nLast meal was\t%lld\n", philo->data->start_time, philo->last_meal);
-	while (philo->data->n_meals && philo->status == START)
+	while (1)
 	{
 		print_message(philo, "is thinking.");
 		philo_cycle(philo);
-		//if (philo->meals_done == philo->data->n_meals)
-		//	break ;
-		//if (time_diff(philo->last_meal) > philo->data->t_die)
-		//{
-		//	printf("Here\n");
-		//	sem_post(philo->dead);
-		//}
+		if (philo->meals_done == philo->data->n_meals)
+			break ;
 	}
+	//printf("Broke from loop\n");
+	sem_post(philo->print);
 	philo->status = FINISHED;
 	return (NULL);
 }

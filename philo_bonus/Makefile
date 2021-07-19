@@ -1,4 +1,4 @@
-NAME =		phil_bonus
+NAME =		philo_bonus
 SRCS =		./init_structs.c \
 			./routines.c \
 			./forks.c \
@@ -32,7 +32,7 @@ norm:		fclean
 run:		
 			make re
 			make clean
-			./$(NAME) 5 800 200 200
+			./$(NAME) 4 410 200 200
 
 bonus:		all
 

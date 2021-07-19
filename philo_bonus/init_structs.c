@@ -20,11 +20,11 @@ t_data	*data_init(int ac, char **av, t_table **table)
 		error_throw("Memory alloc for data failed.", *table);
 	if (ac < 5 || ac > 6)
 		error_throw("N arguments is invalid.", *table);
-	data->n_philos = atoi(av[1]);
-	data->t_die = atoi(av[2]);
-	data->t_eat = atoi(av[3]);
-	data->t_sleep = atoi(av[4]);
-	data->n_meals = 0;
+	data->n_philos = ft_atoi(av[1]);
+	data->t_die = ft_atoi(av[2]);
+	data->t_eat = ft_atoi(av[3]);
+	data->t_sleep = ft_atoi(av[4]);
+	data->n_meals = -1;
 	(*table)->data = data;
 	if (av[5])
 	{
@@ -39,17 +39,15 @@ t_data	*data_init(int ac, char **av, t_table **table)
 
 void				semaphores_init(t_table *table)
 {
-	sem_t			*forks;
 	int				fork_size;
 	int				i;
 
 	sem_unlink("/forks");
 	sem_unlink("/print");
-	sem_unlink("/dead");
+	//sem_unlink("/dead");
 	table->forks = sem_open("/forks", O_CREAT | O_EXCL, 0644, table->data->n_philos);
 	table->print = sem_open("/print", O_CREAT | O_EXCL, 0644, 1);
-	table->dead = sem_open("/print", O_CREAT | O_EXCL, 0644, 1);
-	sem_wait(table->dead);
+	//table->dead = sem_open("/dead", O_CREAT | O_EXCL, 0644, 1);
 }
 
 t_philo	*philos_init(t_table *table)
@@ -69,6 +67,7 @@ t_philo	*philos_init(t_table *table)
 		philos[i].data = table->data;
 		philos[i].print = table->print;
 		philos[i].forks = table->forks;
+		//philos[i].dead = table->dead;
 		philos[i].pos = i + 1;
 		philos[i].status = 0;
 		philos[i].odd = (philos[i].pos % 2 == 1);

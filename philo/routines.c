@@ -3,7 +3,7 @@
 void	print_message(t_philo *philo, char *msg)
 {
 	pthread_mutex_lock(philo->print);
-	printf("%lld %d %s\n", time_now() - philo->data.start_time,philo->pos, msg);
+	printf("%lld %d %s\n", time_diff(philo->data.start_time), philo->pos, msg);
 	pthread_mutex_unlock(philo->print);
 }
 
